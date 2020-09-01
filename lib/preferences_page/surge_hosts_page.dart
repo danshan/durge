@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class SurgeHostsPage extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     List<SurgeHost> hosts = Prefs().listSurgeHostsSync();
@@ -33,6 +32,13 @@ class SurgeHostsPage extends StatelessWidget {
                   );
                 },
               ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+//          _showCreateDialog(context);
+        },
+        child: const Icon(Icons.add),
+        backgroundColor: Theme.of(context).colorScheme.error,
       ),
     );
   }

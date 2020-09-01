@@ -42,7 +42,10 @@ class PreferencesPage extends StatelessWidget {
           item.header,
           style: TextStyle(color: Colors.white),
         ),
-        trailing: Text(item.value),
+        trailing: Text(
+          item.value,
+          style: TextStyle(color: Colors.white54),
+        ),
       );
     }).toList();
   }
@@ -52,13 +55,14 @@ class PreferencesPage extends StatelessWidget {
       children: [
         Text(
           panel.header,
-          style: TextStyle(color: Colors.grey),
+          style: TextStyle(color: Colors.black45),
         ),
         Container(
           padding: const EdgeInsets.all(0),
           margin: const EdgeInsets.symmetric(horizontal: 20.0),
           decoration: BoxDecoration(
-              color: Colors.grey, borderRadius: new BorderRadius.circular(5.0)),
+              color: Colors.black45,
+              borderRadius: new BorderRadius.circular(5.0)),
           child: Column(
             children: buildItem(panel.items),
           ),
@@ -74,19 +78,23 @@ class PreferencesPage extends StatelessWidget {
       children: [
         Text(
           "Host",
-          style: TextStyle(color: Colors.grey),
+          style: TextStyle(color: Colors.black45),
         ),
         Container(
           padding: const EdgeInsets.all(0),
           margin: const EdgeInsets.symmetric(horizontal: 20.0),
           decoration: BoxDecoration(
-              color: Colors.grey, borderRadius: new BorderRadius.circular(5.0)),
+              color: Colors.black45,
+              borderRadius: new BorderRadius.circular(5.0)),
           child: Column(
             children: [
               (hosts == null || hosts.length == 0)
                   ? ListTile(
-                      title: Text("Host list is empty"),
-                      trailing: Icon(Icons.chevron_right),
+                      title: Text(
+                        "Host list is empty",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      trailing: Icon(Icons.chevron_right, color: Colors.white,),
                       onTap: () {
                         Navigator.push(
                           context,
@@ -96,8 +104,14 @@ class PreferencesPage extends StatelessWidget {
                       },
                     )
                   : ListTile(
-                      title: Text(hosts[0].name),
-                      subtitle: Text("${hosts[0]}"),
+                      title: Text(
+                        hosts[0].name,
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      subtitle: Text(
+                        "${hosts[0]}",
+                        style: TextStyle(color: Colors.white54),
+                      ),
                       trailing: Icon(Icons.chevron_right),
                       onTap: () {
                         Navigator.push(
