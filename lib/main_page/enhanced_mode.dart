@@ -19,15 +19,10 @@ class _SwitchEnhancedModeState extends State<EnhancedMode> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Text("Enhanced Mode"),
-        Spacer(),
-        Switch(
-          value: switchValue,
-          onChanged: _changeSwitch,
-        ),
-      ],
+    return SwitchListTile(
+      title: Text("Enhanced Mode"),
+      value: switchValue,
+      onChanged: _changeSwitch,
     );
   }
 }

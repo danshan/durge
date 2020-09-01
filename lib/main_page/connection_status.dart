@@ -1,63 +1,97 @@
 import 'dart:developer' as developer;
 
+import 'package:durge/main_page/durge_preferences.dart';
+import 'package:durge/surge_host.dart';
 import 'package:flutter/material.dart';
 
+var prefs = Prefs();
+List<SurgeHost> surgeHosts;
+
 class ConnectionStatus extends StatefulWidget {
+  const ConnectionStatus();
+
   @override
-  _SelectConnectionStatusState createState() => _SelectConnectionStatusState();
+  State createState() => _SelectConnectionStatusState();
 }
 
-class SurgeHost {
-  SurgeHost({this.name, this.host, this.port, this.password});
-
-  final String name;
-  final String host;
-  final int port;
-  final String password;
-}
-
-var _SURGE_HOSTS = [
-  SurgeHost(
-      name: "macbook-pro", host: "127.0.0.1", port: 6100, password: "pwd"),
-  SurgeHost(name: "esxi-macos", host: "127.0.0.1", port: 6100, password: "pwd")
-];
 
 class _HostList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 300,
-      child: Column(
+    return Scaffold(
+      appBar: AppBar(automaticallyImplyLeading: false, title: Text("Hosts")),
+      body: ListView.builder(
+        itemCount: 0,
+        itemBuilder: (context, index) {
+          return ListTile(
+            title: Text(surgeHosts[index].name),
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          _showCreateDialog(context);
+        },
+        child: const Icon(Icons.add),
+        backgroundColor: Theme.of(context).colorScheme.error,
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
+    );
+  }
+
+  void _showCreateDialog(BuildContext context) {
+    _showDialog(
+      context: context,
+      child: SimpleDialog(
+        title: Text("Add New Host"),
         children: [
-          Container(
-            height: 70,
-            child: Center(
-              child: Text(
-                "Hosts",
-                textAlign: TextAlign.center,
+          ListTile(
+            leading: const Text("Name"),
+            title: new TextField(
+              decoration: new InputDecoration(
+                hintText: "Custom Name",
               ),
             ),
           ),
-          const Divider(thickness: 1),
-          Expanded(
-            child: ListView.builder(
-              itemCount: _SURGE_HOSTS.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(_SURGE_HOSTS[index].name),
-                );
-              },
+          ListTile(
+            leading: const Text("Host"),
+            title: new TextField(
+              decoration: new InputDecoration(
+                hintText: "Host",
+              ),
+            ),
+          ),
+          ListTile(
+            leading: const Text("Port"),
+            title: new TextField(
+              decoration: new InputDecoration(
+                hintText: "Port",
+              ),
+            ),
+          ),
+          ListTile(
+            leading: const Text("API Key"),
+            title: new TextField(
+              decoration: new InputDecoration(
+                hintText: "API Key",
+              ),
             ),
           ),
         ],
       ),
     );
   }
+
+  Future<void> _showDialog({BuildContext context, Widget child}) async {
+    final value = await showDialog(
+      context: context,
+      builder: (context) => child,
+    );
+  }
 }
 
 class _SelectConnectionStatusState extends State<ConnectionStatus> {
-  String name;
-  VoidCallback _showBottomSheetCallback;
+  String name = "";
 
   void _showHostList(BuildContext context) {
     showModalBottomSheet(
@@ -75,27 +109,31 @@ class _SelectConnectionStatusState extends State<ConnectionStatus> {
   @override
   void initState() {
     super.initState();
-    name = _SURGE_HOSTS[0].name;
+    prefs.listSurgeHosts().then((hosts) {
+      developer.log(hosts.toString(), name: "surge hosts");
+      surgeHosts = hosts;
+      if (surgeHosts.length > 0) {
+        name = surgeHosts[0].name;
+      }
+    });
+    developer.log("fuck");
   }
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Text("Status"),
-        Spacer(),
-        FlatButton.icon(
-          icon: Icon(
-            Icons.lens,
-            size: 10,
-            color: Colors.green,
-          ),
-          label: Text(name),
-          onPressed: () {
-            _showHostList(context);
-          },
+    return ListTile(
+      title: Text("Status"),
+      trailing: FlatButton.icon(
+        icon: Icon(
+          Icons.lens,
+          size: 10,
+          color: Colors.green,
         ),
-      ],
+        label: Text(name),
+        onPressed: () {
+          _showHostList(context);
+        },
+      ),
     );
   }
 }
