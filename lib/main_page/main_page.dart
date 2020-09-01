@@ -1,3 +1,4 @@
+import 'package:durge/main_page/enhanced_mode.dart';
 import 'package:durge/main_page/main_page_buttons.dart';
 import 'package:durge/main_page/system_proxy.dart';
 import 'package:flutter/cupertino.dart';
@@ -24,7 +25,7 @@ class MainPage extends StatelessWidget {
               children: [
                 Text("Status"),
                 SystemProxy(),
-                Text("Enhanced Mode"),
+                EnhancedMode(),
               ],
             ),
             Center(
