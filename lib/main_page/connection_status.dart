@@ -1,6 +1,6 @@
 import 'dart:developer' as developer;
 
-import 'package:durge/main_page/durge_preferences.dart';
+import 'package:durge/config/durge_preferences.dart';
 import 'package:durge/surge_host.dart';
 import 'package:flutter/material.dart';
 

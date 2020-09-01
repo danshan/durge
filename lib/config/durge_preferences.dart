@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:developer' as developer;
 
-
 import '../surge_host.dart';
 
 class Prefs {
@@ -29,6 +28,27 @@ class Prefs {
     return hosts;
   }
 
+  List<SurgeHost> listSurgeHostsSync() {
+    Future<List<SurgeHost>> future = listSurgeHosts();
+    future.then((hosts) {
+      return hosts;
+    });
+  }
+
+  Future<SurgeHost> currentSurgeHostsSync() async {
+    List<SurgeHost> hosts = await listSurgeHosts();
+    if (hosts == null || hosts.length == 0) {
+      return null;
+    }
+    for (SurgeHost host in hosts) {
+      if (host.selected) {
+        return host;
+      }
+    }
+
+    return hosts[0];
+  }
+
   void addSurgeHost(SurgeHost host) async {
     List<SurgeHost> surgeHosts = await listSurgeHosts();
 
@@ -47,7 +67,6 @@ class Prefs {
       hostStrs.add(jsonEncode(surgeHost));
     }
     prefs.setStringList(_KEY_SURGE_HOSTS, hostStrs);
-
   }
 
   void delSurgeHost(SurgeHost host) async {
@@ -64,8 +83,5 @@ class Prefs {
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setStringList(_KEY_SURGE_HOSTS, hostStrs);
-
   }
-
 }
-
