@@ -1,3 +1,4 @@
+import 'package:durge/main_page/main_page_buttons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -16,7 +17,7 @@ class MainPage extends StatelessWidget {
             )
           ],
         ),
-        body: Row(
+        body: Column(
           children: [
             Column(
               children: [
@@ -24,6 +25,9 @@ class MainPage extends StatelessWidget {
                 Text("System Proxy"),
                 Text("Enhanced Mode"),
               ],
+            ),
+            Center(
+              child: MainPageButtons()
             )
           ],
         ));

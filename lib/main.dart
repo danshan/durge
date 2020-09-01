@@ -1,10 +1,9 @@
-import 'package:durge/main_page.dart';
-import 'package:durge/shoppinglistitem.dart';
+import 'package:durge/main_page/main_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 void main() {
-  runApp(MaterialApp(
-    title: 'Durge',
-    home: MainPage()
-  ));
+  debugPaintSizeEnabled = true;
+
+  runApp(MaterialApp(title: 'Durge', home: MainPage()));
 }
