@@ -1,4 +1,4 @@
-import 'package:durge/config/durge_preferences.dart';
+import 'package:durge/config/preferences_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -38,7 +38,7 @@ class _SurgeHostState extends State<SurgeHostModifyPage> {
   }
 
   Future<void> _saveSurgeHost() async{
-    return Prefs.addSurgeHost(SurgeHost(
+    return preference_utils.addSurgeHost(SurgeHost(
       name: name,
       host: host,
       port: port,

@@ -1,4 +1,4 @@
-import 'package:durge/config/durge_preferences.dart';
+import 'package:durge/config/preferences_utils.dart';
 import 'package:durge/preferences_page/surge_host_modify_page.dart';
 import 'package:durge/surge_host.dart';
 import 'package:flutter/cupertino.dart';
@@ -52,7 +52,7 @@ class _SurgeHostsState extends State<SurgeHostsPage> {
       direction: DismissDirection.endToStart,
       onDismissed: (direction) {
         hosts.removeAt(index);
-        Prefs.delSurgeHost(host);
+        preference_utils.delSurgeHost(host);
         Scaffold.of(context)
             .showSnackBar(SnackBar(content: Text("${host.name} removed")));
       },
@@ -91,7 +91,7 @@ class _SurgeHostsState extends State<SurgeHostsPage> {
       ),
       body: FutureBuilder(
         builder: _buildFuture,
-        future: Prefs.listSurgeHosts(),
+        future: preference_utils.listSurgeHosts(),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

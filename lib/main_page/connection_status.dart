@@ -1,6 +1,6 @@
 import 'dart:developer' as developer;
 
-import 'package:durge/config/durge_preferences.dart';
+import 'package:durge/config/preferences_utils.dart';
 import 'package:durge/surge_host.dart';
 import 'package:flutter/material.dart';
 
@@ -58,7 +58,7 @@ class _ConnectionStatusState extends State<ConnectionStatus> {
       title: Text("Status"),
       trailing: FutureBuilder(
         builder: _builderFuture,
-        future: Prefs.currentSurgeHost(),
+        future: preference_utils.currentSurgeHost(),
       ),
     );
   }
@@ -108,7 +108,7 @@ class _HostListState extends State<_HostList> {
       appBar: AppBar(automaticallyImplyLeading: false, title: Text("Hosts")),
       body: FutureBuilder(
         builder: _builderFuture,
-        future: Prefs.listSurgeHosts()
+        future: preference_utils.listSurgeHosts()
       ),
     );
   }

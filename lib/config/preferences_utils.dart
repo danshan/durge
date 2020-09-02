@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../surge_host.dart';
 
-class Prefs {
+class preference_utils {
 
   static final String _KEY_SURGE_HOSTS = "surge.hosts";
 
@@ -26,12 +26,6 @@ class Prefs {
     }
 
     developer.log("found ${hosts.length} surge hosts: $hosts", name: "prefs");
-    return hosts;
-  }
-
-  static List<SurgeHost> listSurgeHostsSync() {
-    List<SurgeHost> hosts;
-    listSurgeHosts().then((value) => hosts = value);
     return hosts;
   }
 

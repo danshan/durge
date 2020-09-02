@@ -1,7 +1,9 @@
 import 'package:durge/commons/common_panel.dart';
-import 'package:durge/config/durge_preferences.dart';
+import 'package:durge/config/durge_meta.dart';
+import 'package:durge/config/preferences_utils.dart';
 import 'package:durge/preferences_page/surge_hosts_page.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../surge_host.dart';
 
@@ -10,11 +12,11 @@ class PreferencesPage extends StatelessWidget {
     header: "Contact",
     isExpanded: true,
     items: [
-      PrefItem(
-          icon: Icons.public,
-          header: "Homepage",
-          value: "https://www.shanhh.com"),
-      PrefItem(icon: Icons.email, header: "Email", value: "i@shanhh.com"),
+      PrefItem( icon: Icons.public, header: "Homepage", value: DurgeMeta.contact["homepage"]),
+      PrefItem( icon: Icons.email, header: "Email", value: DurgeMeta.contact["email"]),
+      PrefItem( icon: FontAwesomeIcons.githubAlt, header: "GitHub", value: DurgeMeta.contact["github"]),
+      PrefItem( icon: FontAwesomeIcons.twitter, header: "Twitter", value: DurgeMeta.contact["twitter"]),
+      PrefItem( icon: FontAwesomeIcons.telegramPlane, header: "Telegram", value: DurgeMeta.contact["telegram"]),
     ],
   );
 
@@ -22,8 +24,7 @@ class PreferencesPage extends StatelessWidget {
     header: "About",
     isExpanded: true,
     items: [
-      PrefItem(icon: Icons.widgets, header: "App Version", value: "v0.1.0"),
-      PrefItem(icon: Icons.email, header: "Email", value: "i@shanhh.com"),
+      PrefItem(icon: FontAwesomeIcons.appStore, header: "App Version", value: "v0.1.0"),
     ],
   );
 
@@ -71,7 +72,7 @@ class PreferencesPage extends StatelessWidget {
   }
 
   buildHostPanel(BuildContext context) {
-    SurgeHost host = Prefs.currentSurgeHostSync();
+    SurgeHost host = preference_utils.currentSurgeHostSync();
 
     var column = Column(
       children: [
