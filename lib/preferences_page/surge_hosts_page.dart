@@ -12,9 +12,6 @@ class SurgeHostsPage extends StatefulWidget {
 }
 
 class _SurgeHostsState extends State<SurgeHostsPage> {
-  Future _listSurgeHosts() async {
-    return Prefs.listSurgeHosts();
-  }
 
   Widget _buildFuture(BuildContext context, AsyncSnapshot snapshot) {
     switch (snapshot.connectionState) {
@@ -36,7 +33,7 @@ class _SurgeHostsState extends State<SurgeHostsPage> {
 
   Widget _createHostsView(BuildContext context, AsyncSnapshot snapshot) {
     List hosts = snapshot.data;
-    print(hosts);
+
     return Container(
       padding: const EdgeInsets.all(0),
       margin: const EdgeInsets.all(20.0),
@@ -94,7 +91,7 @@ class _SurgeHostsState extends State<SurgeHostsPage> {
       ),
       body: FutureBuilder(
         builder: _buildFuture,
-        future: _listSurgeHosts(),
+        future: Prefs.listSurgeHosts(),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
