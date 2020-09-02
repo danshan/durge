@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 class DurgeMeta {
@@ -8,6 +7,9 @@ class DurgeMeta {
     "github": "https://github.com/danshan",
     "twitter": "@danshan",
     "telegram": "@danshan",
+  };
 
+  static final Map about = {
+    "appversion": "0.1.0",
   };
 }

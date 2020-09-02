@@ -12,22 +12,15 @@ class SurgeHostsPage extends StatefulWidget {
 }
 
 class _SurgeHostsState extends State<SurgeHostsPage> {
-
   Widget _buildFuture(BuildContext context, AsyncSnapshot snapshot) {
     switch (snapshot.connectionState) {
-      case ConnectionState.none:
-        return Text('还没有开始网络请求');
-      case ConnectionState.active:
-        return Text('ConnectionState.active');
-      case ConnectionState.waiting:
-        return Center(
-          child: CircularProgressIndicator(),
-        );
       case ConnectionState.done:
         if (snapshot.hasError) return Text('Error: ${snapshot.error}');
         return _createHostsView(context, snapshot);
       default:
-        return null;
+        return Center(
+          child: CircularProgressIndicator(),
+        );
     }
   }
 
@@ -52,17 +45,15 @@ class _SurgeHostsState extends State<SurgeHostsPage> {
       direction: DismissDirection.endToStart,
       onDismissed: (direction) {
         hosts.removeAt(index);
-        preference_utils.delSurgeHost(host);
-        Scaffold.of(context)
-            .showSnackBar(SnackBar(content: Text("${host.name} removed")));
+        Prefs.delSurgeHost(host);
+        Scaffold.of(context).showSnackBar(SnackBar(content: Text("${host.name} removed")));
       },
       child: ListTile(
         title: Text(
           host.name,
           style: TextStyle(color: Colors.white),
         ),
-        subtitle: Text("${host.host}:${host.port} ${host.apiKey}",
-            style: TextStyle(color: Colors.white54)),
+        subtitle: Text("${host.host}:${host.port} ${host.apiKey}", style: TextStyle(color: Colors.white54)),
         trailing: Icon(
           Icons.chevron_right,
           color: Colors.white,
@@ -91,16 +82,20 @@ class _SurgeHostsState extends State<SurgeHostsPage> {
       ),
       body: FutureBuilder(
         builder: _buildFuture,
-        future: preference_utils.listSurgeHosts(),
+        future: Prefs.listSurgeHosts(),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => SurgeHostModifyPage()));
+          _navSurgeHostModifyPage();
         },
         child: const Icon(Icons.add),
         backgroundColor: Theme.of(context).colorScheme.error,
       ),
     );
+  }
+
+  _navSurgeHostModifyPage() async {
+    await Navigator.push(context, MaterialPageRoute(builder: (context) => SurgeHostModifyPage()));
+    setState(() {});
   }
 }

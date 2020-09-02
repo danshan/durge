@@ -38,7 +38,7 @@ class _SurgeHostState extends State<SurgeHostModifyPage> {
   }
 
   Future<void> _saveSurgeHost() async{
-    return preference_utils.addSurgeHost(SurgeHost(
+    return Prefs.addSurgeHost(SurgeHost(
       name: name,
       host: host,
       port: port,

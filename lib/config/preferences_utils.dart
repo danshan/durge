@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../surge_host.dart';
 
-class preference_utils {
+class Prefs {
 
   static final String _KEY_SURGE_HOSTS = "surge.hosts";
 

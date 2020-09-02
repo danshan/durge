@@ -58,7 +58,7 @@ class _ConnectionStatusState extends State<ConnectionStatus> {
       title: Text("Status"),
       trailing: FutureBuilder(
         builder: _builderFuture,
-        future: preference_utils.currentSurgeHost(),
+        future: Prefs.currentSurgeHost(),
       ),
     );
   }
@@ -108,7 +108,7 @@ class _HostListState extends State<_HostList> {
       appBar: AppBar(automaticallyImplyLeading: false, title: Text("Hosts")),
       body: FutureBuilder(
         builder: _builderFuture,
-        future: preference_utils.listSurgeHosts()
+        future: Prefs.listSurgeHosts()
       ),
     );
   }
