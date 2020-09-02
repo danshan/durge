@@ -1,24 +1,36 @@
+import 'package:flutter/cupertino.dart';
+
 class SurgeHost {
-  SurgeHost({this.name, this.host, this.port, this.password, this.selected});
+  SurgeHost({
+    @required this.name,
+    @required this.host,
+    @required this.port,
+    @required this.apiKey,
+    @required this.selected,
+  });
 
   final String name;
   final String host;
   final int port;
-  final String password;
+  final String apiKey;
   final bool selected;
 
   SurgeHost.fromJson(Map<String, dynamic> json)
       : name = json['name'],
         host = json['host'],
         port = json['port'],
-        password = json['password'],
+        apiKey = json['apiKey'],
         selected = json['selected'];
 
   Map<String, dynamic> toJson() => {
         'name': name,
         'host': host,
         'port': port,
-        'password': password,
+        'apiKey': apiKey,
         'selected': selected,
       };
+
+  String toString() {
+    return "$name - $host - $port";
+  }
 }

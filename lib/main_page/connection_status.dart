@@ -4,7 +4,6 @@ import 'package:durge/config/durge_preferences.dart';
 import 'package:durge/surge_host.dart';
 import 'package:flutter/material.dart';
 
-var prefs = Prefs();
 List<SurgeHost> surgeHosts;
 
 class ConnectionStatus extends StatefulWidget {
@@ -109,14 +108,13 @@ class _SelectConnectionStatusState extends State<ConnectionStatus> {
   @override
   void initState() {
     super.initState();
-    prefs.listSurgeHosts().then((hosts) {
+    Prefs.listSurgeHosts().then((hosts) {
       developer.log(hosts.toString(), name: "surge hosts");
       surgeHosts = hosts;
       if (surgeHosts.length > 0) {
         name = surgeHosts[0].name;
       }
     });
-    developer.log("fuck");
   }
 
   @override

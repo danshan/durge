@@ -1,3 +1,4 @@
+import 'package:durge/commons/common_panel.dart';
 import 'package:durge/config/durge_preferences.dart';
 import 'package:durge/preferences_page/surge_hosts_page.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +18,15 @@ class PreferencesPage extends StatelessWidget {
     ],
   );
 
+  PrefPanel aboutPanel = PrefPanel(
+    header: "About",
+    isExpanded: true,
+    items: [
+      PrefItem(icon: Icons.widgets, header: "App Version", value: "v0.1.0"),
+      PrefItem(icon: Icons.email, header: "Email", value: "i@shanhh.com"),
+    ],
+  );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,6 +37,7 @@ class PreferencesPage extends StatelessWidget {
           children: [
             buildHostPanel(context),
             buildPropertiesPanel(contactPanel),
+            buildPropertiesPanel(aboutPanel),
           ],
         ));
   }
@@ -51,80 +62,42 @@ class PreferencesPage extends StatelessWidget {
   }
 
   buildPropertiesPanel(PrefPanel panel) {
-    return Column(
-      children: [
-        Text(
-          panel.header,
-          style: TextStyle(color: Colors.black45),
-        ),
-        Container(
-          padding: const EdgeInsets.all(0),
-          margin: const EdgeInsets.symmetric(horizontal: 20.0),
-          decoration: BoxDecoration(
-              color: Colors.black45,
-              borderRadius: new BorderRadius.circular(5.0)),
-          child: Column(
-            children: buildItem(panel.items),
-          ),
-        )
-      ],
+    return CommonPanel(
+      title: panel.header,
+      child: Column(
+        children: buildItem(panel.items),
+      ),
     );
   }
 
   buildHostPanel(BuildContext context) {
-    List<SurgeHost> hosts = Prefs().listSurgeHostsSync();
+    SurgeHost host = Prefs.currentSurgeHostSync();
 
-    return Column(
+    var column = Column(
       children: [
-        Text(
-          "Host",
-          style: TextStyle(color: Colors.black45),
-        ),
-        Container(
-          padding: const EdgeInsets.all(0),
-          margin: const EdgeInsets.symmetric(horizontal: 20.0),
-          decoration: BoxDecoration(
-              color: Colors.black45,
-              borderRadius: new BorderRadius.circular(5.0)),
-          child: Column(
-            children: [
-              (hosts == null || hosts.length == 0)
-                  ? ListTile(
-                      title: Text(
-                        "Host list is empty",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      trailing: Icon(Icons.chevron_right, color: Colors.white,),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => SurgeHostsPage()),
-                        );
-                      },
-                    )
-                  : ListTile(
-                      title: Text(
-                        hosts[0].name,
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      subtitle: Text(
-                        "${hosts[0]}",
-                        style: TextStyle(color: Colors.white54),
-                      ),
-                      trailing: Icon(Icons.chevron_right),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => SurgeHostsPage()),
-                        );
-                      },
-                    )
-            ],
+        ListTile(
+          title: (host == null)
+              ? Text("Host list is empty",
+                  style: TextStyle(color: Colors.white))
+              : Text(host.name, style: TextStyle(color: Colors.white)),
+          subtitle: (host == null)
+              ? null
+              : Text("${host.host}", style: TextStyle(color: Colors.white54)),
+          trailing: Icon(
+            Icons.chevron_right,
+            color: Colors.white,
           ),
-        ),
+          onTap: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => SurgeHostsPage()));
+          },
+        )
       ],
+    );
+
+    return CommonPanel(
+      title: "Host",
+      child: column,
     );
   }
 }

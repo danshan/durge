@@ -1,14 +1,15 @@
 import 'dart:convert';
+import 'dart:developer' as developer;
 
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:developer' as developer;
 
 import '../surge_host.dart';
 
 class Prefs {
-  final String _KEY_SURGE_HOSTS = "surge.hosts";
 
-  Future<List<SurgeHost>> listSurgeHosts() async {
+  static final String _KEY_SURGE_HOSTS = "surge.hosts";
+
+  static Future<List<SurgeHost>> listSurgeHosts() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     List<String> hostStrs = prefs.getStringList(_KEY_SURGE_HOSTS);
@@ -24,18 +25,17 @@ class Prefs {
       hosts.add(host);
     }
 
-    developer.log("$hosts.length", name: "prefs");
+    developer.log("found ${hosts.length} surge hosts: $hosts", name: "prefs");
     return hosts;
   }
 
-  List<SurgeHost> listSurgeHostsSync() {
-    Future<List<SurgeHost>> future = listSurgeHosts();
-    future.then((hosts) {
-      return hosts;
-    });
+  static List<SurgeHost> listSurgeHostsSync() {
+    List<SurgeHost> hosts;
+    listSurgeHosts().then((value) => hosts = value);
+    return hosts;
   }
 
-  Future<SurgeHost> currentSurgeHostsSync() async {
+  static Future<SurgeHost> currentSurgeHost() async {
     List<SurgeHost> hosts = await listSurgeHosts();
     if (hosts == null || hosts.length == 0) {
       return null;
@@ -49,7 +49,14 @@ class Prefs {
     return hosts[0];
   }
 
-  void addSurgeHost(SurgeHost host) async {
+  static SurgeHost currentSurgeHostSync() {
+    SurgeHost host;
+    currentSurgeHost().then((value) => host = value);
+    return host;
+  }
+
+  static Future<void> addSurgeHost(SurgeHost host) async {
+    developer.log("save surge host $host", name:"prefs");
     List<SurgeHost> surgeHosts = await listSurgeHosts();
 
     for (SurgeHost exists in surgeHosts) {
@@ -67,9 +74,11 @@ class Prefs {
       hostStrs.add(jsonEncode(surgeHost));
     }
     prefs.setStringList(_KEY_SURGE_HOSTS, hostStrs);
+    developer.log("current surge hosts $hostStrs", name:"prefs");
+
   }
 
-  void delSurgeHost(SurgeHost host) async {
+  static void delSurgeHost(SurgeHost host) async {
     List<SurgeHost> surgeHosts = await listSurgeHosts();
     List<String> hostStrs = List();
 
