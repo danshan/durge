@@ -1,12 +1,10 @@
 import 'dart:convert';
 import 'dart:developer' as developer;
 
+import 'package:durge/surge_host.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../surge_host.dart';
-
 class Prefs {
-
   static final String _KEY_SURGE_HOSTS = "surge.hosts";
 
   static Future<List<SurgeHost>> listSurgeHosts() async {
@@ -43,48 +41,52 @@ class Prefs {
     return hosts[0];
   }
 
-  static SurgeHost currentSurgeHostSync() {
-    SurgeHost host;
-    currentSurgeHost().then((value) => host = value);
-    return host;
-  }
-
   static Future<void> addSurgeHost(SurgeHost host) async {
-    developer.log("save surge host $host", name:"prefs");
     List<SurgeHost> surgeHosts = await listSurgeHosts();
 
     for (SurgeHost exists in surgeHosts) {
       if (exists.name == host.name) {
-        return;
+        throw ("Name already exists.");
       }
+      exists.selected = false;
     }
 
+    host.selected = true;
     surgeHosts.add(host);
-
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
     List<String> hostStrs = List();
     for (SurgeHost surgeHost in surgeHosts) {
       hostStrs.add(jsonEncode(surgeHost));
     }
-    prefs.setStringList(_KEY_SURGE_HOSTS, hostStrs);
-    developer.log("current surge hosts $hostStrs", name:"prefs");
-
-  }
-
-  static void delSurgeHost(SurgeHost host) async {
-    List<SurgeHost> surgeHosts = await listSurgeHosts();
-    List<String> hostStrs = List();
-
-    for (SurgeHost exists in surgeHosts) {
-      if (exists.name == host.name) {
-        continue;
-      } else {
-        hostStrs.add(jsonEncode(exists));
-      }
-    }
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setStringList(_KEY_SURGE_HOSTS, hostStrs);
+    developer.log("save surge host $host", name: "prefs");
+  }
+
+  static Future<void> updateSurgeHost(SurgeHost host) async {}
+
+  static void delSurgeHost(SurgeHost host) async {
+    List<SurgeHost> surgeHosts = await listSurgeHosts();
+    List<SurgeHost> afterDelete = List();
+
+    bool removeSelected = false;
+    for (SurgeHost exists in surgeHosts) {
+      if (exists.name == host.name) {
+        removeSelected = exists.selected;
+        continue;
+      } else {
+        afterDelete.add(exists);
+      }
+    }
+    if (removeSelected && afterDelete.length > 0) {
+      afterDelete[0].selected = true; // set the first host as selected
+    }
+
+    List<String> hostStrs = List();
+    afterDelete.map((item) => hostStrs.add(jsonEncode(item)));
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setStringList(_KEY_SURGE_HOSTS, hostStrs);
+    developer.log("delete surge host $host", name: "prefs");
   }
 }

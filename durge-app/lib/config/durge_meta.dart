@@ -1,5 +1,3 @@
-import 'dart:io';
-
 class DurgeMeta {
   static final Map contact = {
     "homepage": "https://www.shanhh.com",

@@ -9,11 +9,11 @@ class SurgeHost {
     @required this.selected,
   });
 
-  final String name;
-  final String host;
-  final int port;
-  final String apiKey;
-  final bool selected;
+  String name;
+  String host;
+  int port;
+  String apiKey;
+  bool selected;
 
   SurgeHost.fromJson(Map<String, dynamic> json)
       : name = json['name'],
@@ -29,8 +29,4 @@ class SurgeHost {
         'apiKey': apiKey,
         'selected': selected,
       };
-
-  String toString() {
-    return "$name - $host - $port";
-  }
 }

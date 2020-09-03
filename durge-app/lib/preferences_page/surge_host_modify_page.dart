@@ -1,4 +1,5 @@
 import 'package:durge/config/preferences_utils.dart';
+import 'package:durge/config/surge_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -12,17 +13,9 @@ class SurgeHostModifyPage extends StatefulWidget {
 }
 
 class _SurgeHostState extends State<SurgeHostModifyPage> {
-  String name;
-  String host;
-  int port;
-  String apiKey;
+  SurgeHost _surgeHost = SurgeHost(selected: true);
 
   final _formKey = GlobalKey<FormState>();
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,13 +31,7 @@ class _SurgeHostState extends State<SurgeHostModifyPage> {
   }
 
   Future<void> _saveSurgeHost() async{
-    return Prefs.addSurgeHost(SurgeHost(
-      name: name,
-      host: host,
-      port: port,
-      apiKey: apiKey,
-      selected: true
-    ));
+    return Prefs.addSurgeHost(_surgeHost);
   }
 
   Form _buildForm() {
@@ -55,7 +42,7 @@ class _SurgeHostState extends State<SurgeHostModifyPage> {
           TextFormField(
             decoration:
                 InputDecoration(labelText: "Name", hintText: "Custom Name"),
-            onChanged: (value) => setState(() => this.name = value),
+            onChanged: (value) => setState(() => _surgeHost.name = value),
             validator: (value) {
               if (value.isEmpty) {
                 return "Name should not be empty";
@@ -65,7 +52,7 @@ class _SurgeHostState extends State<SurgeHostModifyPage> {
           ),
           TextFormField(
             decoration: InputDecoration(labelText: "Host", hintText: "Host"),
-            onChanged: (value) => setState(() => this.host = value),
+            onChanged: (value) => setState(() => _surgeHost.host = value),
             validator: (value) {
               if (value.isEmpty) {
                 return "Host should not be empty";
@@ -76,7 +63,7 @@ class _SurgeHostState extends State<SurgeHostModifyPage> {
           TextFormField(
             decoration: InputDecoration(labelText: "Port", hintText: "Port"),
             keyboardType: TextInputType.number,
-            onChanged: (value) => setState(() => this.port = int.parse(value)),
+            onChanged: (value) => setState(() => _surgeHost.port = int.parse(value)),
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             validator: (value) {
               if (value.isEmpty) {
@@ -88,7 +75,7 @@ class _SurgeHostState extends State<SurgeHostModifyPage> {
           TextFormField(
             decoration:
                 InputDecoration(labelText: "API Key", hintText: "API Key"),
-            onChanged: (value) => setState(() => this.apiKey = value),
+            onChanged: (value) => setState(() => _surgeHost.apiKey = value),
             validator: (value) {
               if (value.isEmpty) {
                 return "API key should not be empty";
@@ -101,7 +88,10 @@ class _SurgeHostState extends State<SurgeHostModifyPage> {
             child: RaisedButton(
               onPressed: () {
                 if (_formKey.currentState.validate()) {
-                  _saveSurgeHost().then((value) => Navigator.pop(context));
+                  Surge.getOutboundMode(_surgeHost).then((value) {
+                    _saveSurgeHost().then((value) => Navigator.pop(context));
+                  });
+
                 }
               },
               child: Text('Save'),

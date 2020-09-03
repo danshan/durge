@@ -1,7 +1,6 @@
 import 'package:durge/config/preferences_utils.dart';
 import 'package:durge/preferences_page/surge_host_modify_page.dart';
 import 'package:durge/surge_host.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class SurgeHostsPage extends StatefulWidget {
