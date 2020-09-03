@@ -88,7 +88,7 @@ class _SurgeHostState extends State<SurgeHostModifyPage> {
             child: RaisedButton(
               onPressed: () {
                 if (_formKey.currentState.validate()) {
-                  Surge.getOutboundMode(_surgeHost).then((value) {
+                  Surge.checkConnection(_surgeHost).then((value) {
                     _saveSurgeHost().then((value) => Navigator.pop(context));
                   });
 

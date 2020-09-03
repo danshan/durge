@@ -1,8 +1,13 @@
 var express = require('express');
+var request = require('request');
 var router = express.Router();
 
 router.get('/:location?', function (req, res, next) {
-  res.json(getStubWeatherData(req.params.location));
+  // res.json(getStubWeatherData(req.params.location));
+  var url = "http://127.0.0.1:6166"
+    request({uri: url, method: "GET", json: true}, function (_err, _res, _resBody) {
+      res.json(_resBody);
+    });
 });
 
 function getStubWeatherData(location) {
