@@ -29,4 +29,9 @@ class SurgeHost {
         'apiKey': apiKey,
         'selected': selected,
       };
+
+  @override
+  String toString() {
+    return "SurgeHost(name: $name, host: $host, port: $port, selected: $selected)";
+  }
 }

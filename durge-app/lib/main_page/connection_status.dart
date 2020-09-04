@@ -1,8 +1,7 @@
-import 'dart:developer' as developer;
-
-import 'package:durge/config/preferences_utils.dart';
+import 'package:durge/config/prefs_model.dart';
 import 'package:durge/surge_host.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ConnectionStatus extends StatefulWidget {
   @override
@@ -45,21 +44,23 @@ class _ConnectionStatusState extends State<ConnectionStatus> {
       builder: (context) {
         return _HostList();
       },
-    ).whenComplete(() {
-//      _changeHost(name);
-    });
+    );
   }
 
   void _changeHost(void name) {}
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: Text("Status"),
-      trailing: FutureBuilder(
-        builder: _builderFuture,
-        future: Prefs.currentSurgeHost(),
-      ),
+    return Consumer<PrefsModel>(
+      builder: (context, prefs, child) {
+        return ListTile(
+          title: Text("Status"),
+          trailing: FutureBuilder(
+            builder: _builderFuture,
+            future: prefs.getSelectedSurgeHost(),
+          ),
+        );
+      },
     );
   }
 }
@@ -72,7 +73,6 @@ class _HostList extends StatefulWidget {
 }
 
 class _HostListState extends State<_HostList> {
-
   Widget _builderFuture(BuildContext context, AsyncSnapshot snapshot) {
     switch (snapshot.connectionState) {
       case ConnectionState.done:
@@ -89,13 +89,18 @@ class _HostListState extends State<_HostList> {
       itemCount: hosts.length,
       itemBuilder: (context, index) {
         SurgeHost host = hosts[index];
-        return ListTile(
-          title: Text(host.name),
-          subtitle: Text("${host.host}:${host.port} ${host.apiKey}"),
-          onTap: () {
-            setState(() {
-              print(host);
-            });
+        return Consumer<PrefsModel>(
+          builder: (context, prefs, child) {
+            return ListTile(
+              title: Text(host.name),
+              subtitle: Text("${host.host}:${host.port} ${host.apiKey}"),
+              onTap: () {
+                setState(() {
+                  prefs.setSelectedSurgeHost(host);
+                  Navigator.pop(context);
+                });
+              },
+            );
           },
         );
       },
@@ -106,9 +111,13 @@ class _HostListState extends State<_HostList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(automaticallyImplyLeading: false, title: Text("Hosts")),
-      body: FutureBuilder(
-        builder: _builderFuture,
-        future: Prefs.listSurgeHosts()
+      body: Consumer<PrefsModel>(
+        builder: (context, prefs, child) {
+          return FutureBuilder(
+            builder: _builderFuture,
+            future: prefs.listSurgeHosts(),
+          );
+        },
       ),
     );
   }

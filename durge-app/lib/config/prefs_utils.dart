@@ -4,14 +4,16 @@ import 'dart:developer' as developer;
 import 'package:durge/surge_host.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class Prefs {
+/// tools for durge preferences
+class PrefsUtils {
   static final String _KEY_SURGE_HOSTS = "surge.hosts";
 
+  /// list surge host list
   static Future<List<SurgeHost>> listSurgeHosts() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     List<String> hostStrs = prefs.getStringList(_KEY_SURGE_HOSTS);
-    List<SurgeHost> hosts = List();
+    List<SurgeHost> hosts = [];
     if (hostStrs == null) {
       developer.log("surge hosts is empty", name: "prefs");
       return hosts;
@@ -23,54 +25,73 @@ class Prefs {
       hosts.add(host);
     }
 
-    developer.log("found ${hosts.length} surge hosts: $hosts", name: "prefs");
+    developer.log("found ${hosts.length} surge hosts: [$hosts]", name: "prefs");
     return hosts;
   }
 
-  static Future<SurgeHost> currentSurgeHost() async {
+  static Future<SurgeHost> setSelectSurgeHost(SurgeHost host) async {
     List<SurgeHost> hosts = await listSurgeHosts();
     if (hosts == null || hosts.length == 0) {
       return null;
     }
-    for (SurgeHost host in hosts) {
-      if (host.selected) {
-        return host;
+
+    bool foundExists = false;
+    for (SurgeHost exists in hosts) {
+      if (exists.name == host.name) {
+        foundExists = true;
+        exists.selected = true;
+      } else {
+        exists.selected = false;
       }
     }
 
-    return hosts[0];
+    if (foundExists) {
+      await updateSurgeHosts(hosts);
+      developer.log("select host [$host]", name: "prefs");
+    }
+
+    return host;
   }
 
-  static Future<void> addSurgeHost(SurgeHost host) async {
+  /// add surge host to host list
+  static Future<List<SurgeHost>> addSurgeHost(SurgeHost host) async {
     List<SurgeHost> surgeHosts = await listSurgeHosts();
 
     for (SurgeHost exists in surgeHosts) {
       if (exists.name == host.name) {
-        throw ("Name already exists.");
+        throw ("Name [${exists.name}], already exists.");
       }
       exists.selected = false;
     }
 
     host.selected = true;
     surgeHosts.add(host);
-    List<String> hostStrs = List();
-    for (SurgeHost surgeHost in surgeHosts) {
+    await updateSurgeHosts(surgeHosts);
+    developer.log("add host [$host]", name: "prefs");
+    return surgeHosts;
+  }
+
+  /// update surge host
+  static Future<List<SurgeHost>> updateSurgeHost(SurgeHost host) async {}
+
+  /// save surge hosts
+  static Future<List<SurgeHost>> updateSurgeHosts(List<SurgeHost> hosts) async {
+    List<String> hostStrs = [];
+    for (SurgeHost surgeHost in hosts) {
       hostStrs.add(jsonEncode(surgeHost));
     }
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setStringList(_KEY_SURGE_HOSTS, hostStrs);
-    developer.log("save surge host $host", name: "prefs");
   }
 
-  static Future<void> updateSurgeHost(SurgeHost host) async {}
-
-  static void delSurgeHost(SurgeHost host) async {
-    List<SurgeHost> surgeHosts = await listSurgeHosts();
-    List<SurgeHost> afterDelete = List();
+  /// delete surge host
+  static Future<List<SurgeHost>> delSurgeHost(SurgeHost host) async {
+    List<SurgeHost> currentHosts = await listSurgeHosts();
+    List<SurgeHost> afterDelete = [];
 
     bool removeSelected = false;
-    for (SurgeHost exists in surgeHosts) {
+    for (SurgeHost exists in currentHosts) {
       if (exists.name == host.name) {
         removeSelected = exists.selected;
         continue;
@@ -82,11 +103,8 @@ class Prefs {
       afterDelete[0].selected = true; // set the first host as selected
     }
 
-    List<String> hostStrs = List();
-    afterDelete.map((item) => hostStrs.add(jsonEncode(item)));
-
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setStringList(_KEY_SURGE_HOSTS, hostStrs);
-    developer.log("delete surge host $host", name: "prefs");
+    await updateSurgeHosts(afterDelete);
+    developer.log("delete host [$host]", name: "prefs");
+    return afterDelete;
   }
 }

@@ -12,14 +12,14 @@ class MainPage extends StatelessWidget {
         appBar: AppBar(
           leading: IconButton(
             icon: Icon(Icons.settings),
-            onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => PreferencesPage()),);},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => PreferencesPage()),
+              );
+            },
           ),
           title: Text("Durge"),
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.refresh),
-            )
-          ],
         ),
         body: Column(
           children: [
@@ -30,9 +30,7 @@ class MainPage extends StatelessWidget {
                 EnhancedMode(),
               ],
             ),
-            Center(
-              child: MainPageButtons()
-            )
+            Center(child: MainPageButtons())
           ],
         ));
   }

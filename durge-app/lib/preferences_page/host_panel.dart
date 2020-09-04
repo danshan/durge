@@ -1,9 +1,10 @@
-
 import 'package:durge/commons/common_panel.dart';
-import 'package:durge/config/preferences_utils.dart';
+import 'package:durge/config/prefs_model.dart';
+import 'package:durge/config/prefs_utils.dart';
 import 'package:durge/preferences_page/surge_hosts_page.dart';
 import 'package:durge/surge_host.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class HostPanel extends StatefulWidget {
   @override
@@ -28,38 +29,31 @@ class _HostPanelState extends State<HostPanel> {
 
     return Column(
       children: [
-        ListTile(
-          title: (host == null)
-              ? Text("Host list is empty", style: TextStyle(color: Colors.white))
-              : Text(host.name, style: TextStyle(color: Colors.white)),
-          subtitle: (host == null) ? null : Text("${host.host}", style: TextStyle(color: Colors.white54)),
-          trailing: Icon(
-            Icons.chevron_right,
-            color: Colors.white,
-          ),
-          onTap: () {
-            _navSurgeHostsPage(context);
-          },
-        )
+        Consumer<PrefsModel>(builder: (context, prefs, child) {
+          return ListTile(
+            title: (host == null)
+                ? Text("Host list is empty", style: TextStyle(color: Colors.white))
+                : Text(host.name, style: TextStyle(color: Colors.white)),
+            subtitle: (host == null) ? null : Text("${host.host}", style: TextStyle(color: Colors.white54)),
+            trailing: Icon(
+              Icons.chevron_right,
+              color: Colors.white,
+            ),
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => SurgeHostsPage()));
+            },
+          );
+        }),
       ],
     );
-
   }
 
   @override
   Widget build(BuildContext context) {
     return CommonPanel(
-      title: "Host",
-      child: FutureBuilder(
-        builder: _builderFuture,
-        future: Prefs.currentSurgeHost()
-      ),
-    );
+        title: "Host",
+        child: Consumer<PrefsModel>(builder: (context, prefs, child) {
+          return FutureBuilder(builder: _builderFuture, future: prefs.getSelectedSurgeHost());
+        }));
   }
-
-  void _navSurgeHostsPage(BuildContext context) async {
-    await Navigator.push(context, MaterialPageRoute(builder: (context) => SurgeHostsPage()));
-    setState(() {});
-  }
-
 }

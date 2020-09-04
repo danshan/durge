@@ -1,7 +1,9 @@
-import 'package:durge/config/preferences_utils.dart';
+import 'package:durge/config/prefs_model.dart';
+import 'package:durge/config/prefs_utils.dart';
 import 'package:durge/config/surge_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 import '../surge_host.dart';
 
@@ -30,8 +32,8 @@ class _SurgeHostState extends State<SurgeHostModifyPage> {
         ));
   }
 
-  Future<void> _saveSurgeHost() async{
-    return Prefs.addSurgeHost(_surgeHost);
+  Future<List<SurgeHost>> _saveSurgeHost(PrefsModel prefs, SurgeHost host) async {
+    return prefs.addSurgeHost(host);
   }
 
   Form _buildForm() {
@@ -40,8 +42,7 @@ class _SurgeHostState extends State<SurgeHostModifyPage> {
       child: ListView(
         children: <Widget>[
           TextFormField(
-            decoration:
-                InputDecoration(labelText: "Name", hintText: "Custom Name"),
+            decoration: InputDecoration(labelText: "Name", hintText: "Custom Name"),
             onChanged: (value) => setState(() => _surgeHost.name = value),
             validator: (value) {
               if (value.isEmpty) {
@@ -73,8 +74,7 @@ class _SurgeHostState extends State<SurgeHostModifyPage> {
             },
           ),
           TextFormField(
-            decoration:
-                InputDecoration(labelText: "API Key", hintText: "API Key"),
+            decoration: InputDecoration(labelText: "API Key", hintText: "API Key"),
             onChanged: (value) => setState(() => _surgeHost.apiKey = value),
             validator: (value) {
               if (value.isEmpty) {
@@ -85,16 +85,19 @@ class _SurgeHostState extends State<SurgeHostModifyPage> {
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: RaisedButton(
-              onPressed: () {
-                if (_formKey.currentState.validate()) {
-                  Surge.checkConnection(_surgeHost).then((value) {
-                    _saveSurgeHost().then((value) => Navigator.pop(context));
-                  });
-
-                }
+            child: Consumer<PrefsModel>(
+              builder: (context, prefs, child) {
+                return RaisedButton(
+                  onPressed: () {
+                    if (_formKey.currentState.validate()) {
+                      Surge.checkConnection(_surgeHost).then((value) {
+                        _saveSurgeHost(prefs, _surgeHost).then((value) => Navigator.pop(context));
+                      });
+                    }
+                  },
+                  child: Text('Save'),
+                );
               },
-              child: Text('Save'),
             ),
           ),
         ],
